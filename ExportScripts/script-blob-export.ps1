@@ -26,5 +26,24 @@ WRITE-HOST $container
 
   cd $PSScriptRoot
 
+$publicContainer = "https://$storageAccountName.blob.core.windows.net/$($containerName)public"
+
+$folder = (Get-Item $thisfolder).Parent.FullName + "\Exported\blobfilespublic"
+
+If (Test-Path $folder){
+    REMOVE-ITEM $folder\* -Force -Recurse
+}
+Else{
+    New-Item -ItemType Directory -Force $folder
+}
+
+WRITE-HOST $container
+
+cd ${Env:ProgramFiles(x86)}
+cd "Microsoft SDKs\Azure\AzCopy"
+  
+.\AzCopy.exe /Source:$publicContainer /Dest:$folder /SourceKey:$accessKey /S
+
+cd $PSScriptRoot
 
 WRITE-HOST "Blob export completed!"

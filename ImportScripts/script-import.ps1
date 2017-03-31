@@ -1,6 +1,6 @@
-param([string]$server = "", [string]$database = "",[string]$user = "", [string]$pwd = "", [string]$tenant = "")
+param([string]$server = "", [string]$database = "",[string]$user = "", [string]$passwd = "", [string]$tenant = "")
 
-$connectionString = "Server=$server;uid=$user; pwd=$pwd;Database=$database;Integrated Security=False;"
+$connectionString = "Server=$server;uid=$user; pwd=$passwd;Database=$database;Integrated Security=False;"
 
 
 $thisfolder = $PSScriptRoot
@@ -62,7 +62,7 @@ foreach ($Row in $table.Rows)
 
 	WRITE-HOST "Copy of $($Row[0])..."
   
-	bcp "[$($database)].[$($tenant)].[$($Row[0])]" in $datFolder\$($Row[0]).dat -f  $datFolder\$($Row[0]).xml -S "$($server)" -U "$($user)" -P "$($pwd)" -N -E
+	bcp "[$($database)].[$($tenant)].[$($Row[0])]" in $datFolder\$($Row[0]).dat -f  $datFolder\$($Row[0]).xml -S "$($server)" -U "$($user)" -P "$($passwd)" -N -E
 	
 	
 	

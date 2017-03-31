@@ -37,6 +37,7 @@ param([string] $apiUser, [string]$apiID, [string] $apiPassword, [string] $apiEnd
     return $accessToken
 }
 
+
 $accessToken = ObtainToken $master $apiID $masterpwd $apiEndpoint
 
 $uri = $apiEndpoint + "v1/tenant/create"
@@ -45,11 +46,17 @@ Write-host "Sending creation request for tenant $tenant to $uri"
 
 $Authorization = "Bearer $accessToken"
 try {
+    Write-Host $jsonRepresentation
     $createResults = Invoke-WebRequest -Uri $uri -Method POST -Body $jsonRepresentation -ContentType "application/json" -Headers @{"Authorization" = "$Authorization"} 
 }
 catch {
     $createResults = $_.Exception;
+    $modelState = (ConvertFrom-Json $_.ErrorDetails.Message)
     Write-Host $createResults;
+    if ($modelState){
+        Write-Host "Additional details about model validity:"
+        $modelState | Format-List | Out-String
+    }
 }
 $operationId = $createResults.Headers.'mymis-operation';
 $commandId = $createResults.Headers.'mymis-command';

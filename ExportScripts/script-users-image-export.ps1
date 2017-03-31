@@ -1,7 +1,7 @@
-param([string]$storageAccountName = "",[string]$storageAccessKey = "", [string]$server = "", [string]$database = "",[string]$user = "", [string]$pwd = "", [string]$tenant = "")
+param([string]$storageAccountName = "",[string]$storageAccessKey = "", [string]$server = "", [string]$database = "",[string]$user = "", [string]$passwd = "", [string]$tenant = "")
 
 
-$connectionString = "Server=$server;uid=$user; pwd=$pwd;Database=$database;Integrated Security=False;"
+$connectionString = "Server=$server;uid=$user; pwd=$passwd;Database=$database;Integrated Security=False;"
 
 $thisfolder = $PSScriptRoot
 

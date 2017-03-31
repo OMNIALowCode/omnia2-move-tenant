@@ -26,19 +26,30 @@ $thisfolder = $PSScriptRoot
 $folder = (Get-Item $thisfolder).Parent.FullName + "\Exported\blobfiles"
 $localfolder = "$folder\scripts"
 $destfolder = "Scripts"
-importFiles $localFolder $destFolder $storageAccessKey
+importFiles $localfolder $destfolder $storageAccessKey
 
 
 $localfolder = "$folder\Report-Container"
 $destfolder = "Report-Container"
-importFiles $localFolder $destFolder $storageAccessKey
+importFiles $localfolder $destfolder $storageAccessKey
 
 
 $localfolder = "$folder\Commands"
 $destfolder = "Commands"
-importFiles $localFolder $destFolder $storageAccessKey
+importFiles $localfolder $destfolder $storageAccessKey
 
 
 $localfolder = "$folder\Binary"
 $destfolder = "Binary"
-importFiles $localFolder $destFolder $storageAccessKey
+importFiles $localfolder $destfolder $storageAccessKey
+
+# Public blobs
+$folder = (Get-Item $thisfolder).Parent.FullName + "\Exported\blobfilespublic"
+
+$containerName = $tenant.Replace('-','').ToLower() + "public"
+
+if (Test-Path "$folder\webcomponents"){
+    $localfolder = "$folder\webcomponents"
+    $destfolder = "webcomponents"
+    importFiles $localfolder $destfolder $storageAccessKey
+}

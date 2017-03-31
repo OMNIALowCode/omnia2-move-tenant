@@ -1,6 +1,6 @@
-param([string]$server = "", [string]$database = "",[string]$user = "", [string]$pwd = "", [string]$tenant = "", [string] $tenantAdminUser = "")
+param([string]$server = "", [string]$database = "",[string]$user = "", [string]$passwd = "", [string]$tenant = "", [string] $tenantAdminUser = "")
 
-$connectionString = "Server=$server;uid=$user; pwd=$pwd;Database=$database;Integrated Security=False;"
+$connectionString = "Server=$server;uid=$user; pwd=$passwd;Database=$database;Integrated Security=False;"
 
 $thisfolder = $PSScriptRoot
 
@@ -76,7 +76,6 @@ BEGIN TRY
 
 
 -- DISABLE CONSTRAINTS
-ALTER TABLE [$tenant].UserPrivileges NOCHECK CONSTRAINT ALL
 ALTER TABLE [$tenant].MisEntities NOCHECK CONSTRAINT ALL
 ALTER TABLE [$tenant].MisEntities_Resource NOCHECK CONSTRAINT ALL
 ALTER TABLE [$tenant].MisEntities_Agent NOCHECK CONSTRAINT ALL
@@ -148,23 +147,6 @@ $statements =  $statements + "
 
 
 -- UPDATE DATA - REMOVED #TEMP_Users MOvE DATA TO ADMIN
-
-DELETE  p FROM [$tenant].[UserViewPrivileges] p
-INNER JOIN [$tenant].[UserPrivileges] up on p.UserPrivilegeID = up.ID
-INNER JOIN [$tenant].#TEMP_Users u on u.OldUserID = up.UserID
-WHERE u.Email NOT IN ($($usersEmails))
-
-DELETE  p FROM [$tenant].UserPrivilegeApprovalStages p
-INNER JOIN [$tenant].[UserPrivileges] up on p.UserPrivilegeID = up.ID
-INNER JOIN [$tenant].#TEMP_Users u on u.OldUserID = up.UserID
-WHERE u.Email NOT IN ($($usersEmails))
-
-
-DELETE p
-FROM [$tenant].#TEMP_Users u
-INNER JOIN [$tenant].UserPrivileges p on u.OldUserID = p.UserID
-WHERE u.Email NOT IN ($($usersEmails))
-
 
 
 UPDATE p
@@ -363,13 +345,6 @@ SELECT ID, EMAIL, ContactEMAIL,OldUserID  FROM [$tenant].[#TEMP_Users]
 
 -- UPDATE DATA
 UPDATE p
-set UserID = u.ID
-FROM [$tenant].Users u
-INNER JOIN [$tenant].UserPrivileges p on u.OldUserID = p.UserID
-
-
-
-UPDATE p
 set ModifiedByID = u.ID
 FROM [$tenant].Users u
 INNER JOIN [$tenant].MisEntities p on u.OldUserID = p.ModifiedByID
@@ -522,7 +497,6 @@ FROM [$tenant].Users u
 INNER JOIN [$tenant].UserFavorites p on u.OldUserID = p.UserID
 
 -- DISABLE CONSTRAINTS
-ALTER TABLE [$tenant].UserPrivileges CHECK CONSTRAINT ALL
 ALTER TABLE [$tenant].MisEntities CHECK CONSTRAINT ALL
 ALTER TABLE [$tenant].MisEntities_Resource CHECK CONSTRAINT ALL
 ALTER TABLE [$tenant].MisEntities_Agent CHECK CONSTRAINT ALL

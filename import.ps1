@@ -50,7 +50,7 @@ foreach ($setting in $webApp.SiteConfig.ConnectionStrings){
         $server = $builder.DataSource
         $database = $builder.InitialCatalog
         $user = $builder.UserID
-        $pwd = $builder.Password
+        $passwd = $builder.Password
     }
 }
 
@@ -68,7 +68,7 @@ if (-not $storageAccountName -or -not $storageAccessKey){
     throw "Invalid Storage configuration!"
 }
 
-if (-not $server -or -not  $database -or -not $user -or -not $pwd){
+if (-not $server -or -not  $database -or -not $user -or -not $passwd){
     throw "Invalid SQL Database configuration!"
 }
 
@@ -92,7 +92,7 @@ WRITE-HOST "$(Get-Date -format 'u') - Tenant created..."
 try{
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Database" -PercentComplete 12.5
 cd .\ImportScripts
-& .\script-import.ps1 -server $server -database $database -user $user -pwd $pwd -tenant $tenant
+& .\script-import.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant
 cd ..
 
 WRITE-HOST "$(Get-Date -format 'u') - Data imported..."
@@ -127,14 +127,14 @@ WRITE-HOST "$(Get-Date -format 'u') - Users Image imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Users" -PercentComplete 75
 cd .\ImportScripts
-& .\script-users-import.ps1 -server $server -database $database -user $user -pwd $pwd -tenant $tenant -tenantAdmin $tenantAdminUser
+& .\script-users-import.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant -tenantAdmin $tenantAdminUser
 cd ..
 
 WRITE-HOST "$(Get-Date -format 'u') - Users imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Rebuilding DB Indexes for tenant" -PercentComplete 87.5
 cd .\ImportScripts
-& .\script-rebuild-indexs.ps1 -server $server -database $database -user $user -pwd $pwd -tenant $tenant
+& .\script-rebuild-indexs.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant
 cd ..
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Completed" -Completed

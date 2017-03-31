@@ -22,7 +22,7 @@ foreach ($setting in $webApp.SiteConfig.ConnectionStrings){
         $server = $builder.DataSource
         $database = $builder.InitialCatalog
         $user = $builder.UserID
-        $pwd = $builder.Password
+        $passwd = $builder.Password
     }
 }
 
@@ -31,7 +31,7 @@ if ($storageAccountName -eq $null -or $storageAccessKey -eq $null){
     throw "Invalid Storage configuration!"
 }
 
-if ($server -eq $null -or $database -eq $null -or $user -eq $null -or $pwd -eq $null){
+if ($server -eq $null -or $database -eq $null -or $user -eq $null -or $passwd -eq $null){
     throw "Invalid SQL Database configuration!"
 }
 
@@ -61,21 +61,21 @@ WRITE-HOST "$(Get-Date -format 'u') - Tenant image exported..."
 
 Write-Progress -id 1 -activity "Exporting Data" -Status "Exporting User Images" -PercentComplete 50
 cd .\ExportScripts
-& .\script-users-image-export.ps1 -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey -server $server -database $database -user $user -pwd $pwd -tenant $tenant
+& .\script-users-image-export.ps1 -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey -server $server -database $database -user $user -passwd $passwd -tenant $tenant
 cd ..
 
 WRITE-HOST "$(Get-Date -format 'u') - users image exported..."
 
 Write-Progress -id 1 -activity "Exporting Data" -Status "Exporting Users" -PercentComplete 66.66
 cd .\ExportScripts
-& .\script-users-export.ps1 -server $server -database $database -user $user -pwd $pwd -tenant $tenant
+& .\script-users-export.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant
 cd ..
 
 WRITE-HOST "$(Get-Date -format 'u') - users exported..."
 
 Write-Progress -id 1 -activity "Exporting Data" -Status "Exporting Database" -PercentComplete 83.33
 cd .\ExportScripts
-& .\script-export.ps1 -server $server -database $database -user $user -pwd $pwd -tenant $tenant
+& .\script-export.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant
 cd ..
 
 Write-Progress -id 1 -activity "Exporting Data" -Status "Completed" -Completed
