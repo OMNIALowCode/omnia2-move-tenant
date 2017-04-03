@@ -146,7 +146,7 @@ $query = "SELECT up.Email,
 	ur.RoleID 
 FROM Auth.UserProfile up
 INNER JOIN [Auth].[webpages_UsersInRoles] upm on up.UserID = upm.UserID
-INNER JOIN [Auth].[webpages_Roles] ur on upm.RoleID = upm.RoleID
+INNER JOIN [Auth].[webpages_Roles] ur on upm.RoleID = ur.RoleID
 INNER JOIN Auth.TenantUsers tu on up.UserID = tu.UserID
 INNER JOIN Auth.Tenants t on t.ID = tu.TenantID
 WHERE t.Code = '$tenant' AND up.IsConnector = 0 AND ur.RoleID <> 4";
