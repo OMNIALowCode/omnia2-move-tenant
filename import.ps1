@@ -49,7 +49,7 @@ foreach ($setting in $webApp.SiteConfig.ConnectionStrings){
         $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder -argumentlist ($setting.ConnectionString);
         $server = $builder.DataSource
         $database = $builder.InitialCatalog
-        $user = $builder.UserID
+        $user = $builder.UserID + "@" + (($builder.DataSource -split (".database.windows.net")).Get(0))
         $passwd = $builder.Password
     }
 }
