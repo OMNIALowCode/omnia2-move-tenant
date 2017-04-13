@@ -39,11 +39,20 @@ Else{
 
 WRITE-HOST $container
 
-cd ${Env:ProgramFiles(x86)}
-cd "Microsoft SDKs\Azure\AzCopy"
-  
-.\AzCopy.exe /Source:$publicContainer /Dest:$folder /SourceKey:$accessKey /S
+$SourceStorageContext = New-AzureStorageContext –StorageAccountName $storageAccountName -StorageAccountKey $accessKey
 
-cd $PSScriptRoot
+try{
+    Get-AzureStorageContainer -Context $SourceStorageContext -Name "($containerName)public"
+
+    cd ${Env:ProgramFiles(x86)}
+    cd "Microsoft SDKs\Azure\AzCopy"
+  
+    .\AzCopy.exe /Source:$publicContainer /Dest:$folder /SourceKey:$accessKey /S
+
+    cd $PSScriptRoot
+}
+catch{
+    Write-Host "Public blob for tenant does not exist, skipping copy..."
+}
 
 WRITE-HOST "Blob export completed!"
