@@ -1,4 +1,4 @@
-param([string]$tenant = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "")
+param([string]$tenant = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "", [switch] $ifExists = $false)
 
 $thisfolder = $PSScriptRoot
 
@@ -18,6 +18,18 @@ param([string] $apiUser, [string]$apiID, [string] $apiPassword, [string] $apiEnd
 }
 
 $accessToken = ObtainToken $master $apiID $masterpwd $apiEndpoint
+
+if ($ifExists){
+    $uri = $apiEndpoint + "v1/tenant/Get?code=$tenant"
+    $Authorization = "Bearer $accessToken"
+    try {
+        $res = Invoke-WebRequest -Uri $uri -Method GET -ContentType "application/json" -Headers @{"Authorization" = "$Authorization"} 
+    }
+    catch {
+        $res = $_.Exception;
+        throw "Failed getting tenant. Not attempting deletion."
+    }
+}
 
 $uri = $apiEndpoint + "v1/tenant/remove?tenantcode=$tenant"
 
