@@ -18,7 +18,7 @@ select US.[UserID]
 from Auth.UserProfile us
 INNER JOIN Auth.TenantUsers tu on us.UserID = tu.UserID
 INNER JOIN Auth.Tenants t on t.ID = tu.TenantID
-WHERE t.Code = '$tenant' AND us.IsConnector = 0"
+WHERE t.Code = '$tenant' AND us.IsConnector = 0 AND tu.Status = 1"
 
 
 $connection = New-Object System.Data.SqlClient.SqlConnection
@@ -74,7 +74,7 @@ FROM [Auth].[webpages_Membership] me
 INNER JOIN Auth.UserProfile us on me.UserID = us.UserID
 INNER JOIN Auth.TenantUsers tu on us.UserID = tu.UserID
 INNER JOIN Auth.Tenants t on t.ID = tu.TenantID
-WHERE t.Code = '$tenant' AND us.IsConnector = 0 ";
+WHERE t.Code = '$tenant' AND us.IsConnector = 0 AND tu.Status = 1";
 
 
 
@@ -149,7 +149,7 @@ INNER JOIN [Auth].[webpages_UsersInRoles] upm on up.UserID = upm.UserID
 INNER JOIN [Auth].[webpages_Roles] ur on upm.RoleID = ur.RoleID
 INNER JOIN Auth.TenantUsers tu on up.UserID = tu.UserID
 INNER JOIN Auth.Tenants t on t.ID = tu.TenantID
-WHERE t.Code = '$tenant' AND up.IsConnector = 0 AND ur.RoleID <> 4";
+WHERE t.Code = '$tenant' AND up.IsConnector = 0 AND ur.RoleID <> 4 AND tu.Status = 1";
 
 
 
@@ -203,7 +203,7 @@ $query = "select US.[Email]
 from Auth.UserProfile us
 INNER JOIN Auth.TenantUsers tu on us.UserID = tu.UserID
 INNER JOIN Auth.Tenants t on t.ID = tu.TenantID
-WHERE t.Code = '$tenant' AND us.IsConnector = 0 ";
+WHERE t.Code = '$tenant' AND us.IsConnector = 0 AND tu.Status = 1";
 
 
 
