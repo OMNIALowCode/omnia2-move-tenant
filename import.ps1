@@ -1,6 +1,6 @@
 ﻿param(
-    [string] [Parameter(Mandatory=$true)] $tenant ,
-    [string] [Parameter(Mandatory=$true)]$shortcode,
+    [string] [Parameter(Mandatory=$true)] $tenant,
+    [string] [Parameter(Mandatory=$true)] $shortcode,
     [string] [Parameter(Mandatory=$true)] $tenantname,
     [string] $maxNumberOfUsers = "10",
     [string] $subGroupCode = "DefaultSubGroup",
@@ -10,32 +10,22 @@
     [string] [Parameter(Mandatory=$true)] $master,
     [string] [Parameter(Mandatory=$true)] $masterpwd,
     [string] [Parameter(Mandatory=$true)] $WebsiteName, #http or https://*.azurewebsites.net
-    [string] [Parameter(Mandatory=$true)] $SubscriptionName, #as in -subscriptionname param elsewhere
-    [string] [Parameter(Mandatory=$true)] $ResourceGroupName #as in -resourcegroupname param elsewhere
+    [string] $SubscriptionName, #as in -subscriptionname param elsewhere
+    [string] [Parameter(Mandatory=$true)] $ResourceGroupName, #as in -resourcegroupname param elsewhere
+    [string] $SubscriptionID #as in -subscriptionID param elsewhere
 )
-function Get-ScriptDirectory
-{
-    #Obtains the executing directory of the script
-    $Invocation = (Get-Variable MyInvocation -Scope 1).Value;
-    if($Invocation.PSScriptRoot)
-    {
-        $Invocation.PSScriptRoot;
-    }
-    Elseif($Invocation.MyCommand.Path)
-    {
-        Split-Path $Invocation.MyCommand.Path
-    }
-    else
-    {
-        $Invocation.InvocationName.Substring(0,$Invocation.InvocationName.LastIndexOf("\"));
-    }
-}
-
 $ErrorActionPreference = "Stop"
 
-Set-AzureRmContext -SubscriptionName $SubscriptionName
-
-$workingFolder = Get-ScriptDirectory
+if ($SubscriptionName){
+    Set-AzureRmContext -SubscriptionName $SubscriptionName
+}
+elseif ($SubscriptionID){
+    Set-AzureRmContext -SubscriptionId $SubscriptionID
+}
+else{
+    throw "Process does not work without an Azure Subscription!"
+}
+$workingFolder = $PSScriptRoot
 
 $siteName = (($WebsiteName -split "://")[1] -split ".azurewebsites.net")[0]
 $webApp = Get-AzureRMWebAppSlot -ResourceGroupName $ResourceGroupName -Name $siteName -Slot "Production"
@@ -83,63 +73,63 @@ if (-not $oem -or -not $shortcode -or -not $tenantname -or -not $tenantAdmin -or
 WRITE-HOST "$(Get-Date -format 'u') - Starting..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Creating Tenant"
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-tenant-create.ps1 -code $tenant -shortcode $shortcode -name $tenantname -maxNumberOfUsers $maxNumberOfUsers -subGroupCode $subGroupCode -tenantAdmin $tenantAdmin -tenantAdminPwd $tenantAdminPwd -oem $oem -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd
-cd ..
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Tenant created..."
 
 try{
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Database" -PercentComplete 12.5
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-import.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant
-cd ..
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Data imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Tables" -PercentComplete 25
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-table-import.ps1 -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey -tenant $tenant
-cd ..
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Tables imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Blobs" -PercentComplete 37.5
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-blob-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -tenant $tenant -storageAccessKey $storageAccessKey
-cd ..
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Blobs imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Tenant Image" -PercentComplete 50
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-tenant-image-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey 
-cd ..
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Tenant Image imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing User Images" -PercentComplete 62.5
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-users-image-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey 
-cd ..
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Users Image imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Users" -PercentComplete 75
-cd .\ImportScripts
-& .\script-users-import.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant -tenantAdmin $tenantAdminUser
-cd ..
+cd $workingFolder\ImportScripts
+& .\script-users-import.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant -tenantAdmin $tenantAdmin
+cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Users imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Rebuilding DB Indexes for tenant" -PercentComplete 87.5
-cd .\ImportScripts
+cd $workingFolder\ImportScripts
 & .\script-rebuild-indexs.ps1 -server $server -database $database -user $user -passwd $passwd -tenant $tenant
-cd ..
+cd $workingFolder
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Completed" -Completed
 
-WRITE-HOST "$(Get-Date -format 'u') - DB Indexs rebuilded..."
+WRITE-HOST "$(Get-Date -format 'u') - DB Indexs rebuilt..."
 
 Write-Host "Data imported sucessfully. Please recreate the connectors."
 }
@@ -147,8 +137,7 @@ catch{
     Write-Host ("Process failed! " + $_.Exception)
     $confirmation = Read-Host ("Do you want to delete the created tenant? Y to confirm")
     if ($confirmation -eq 'y' -or $confirmation -eq 'yes') {
-        cd $workingFolder
-        cd .\ImportScripts
+        cd $workingFolder\ImportScripts
         & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd
     }
     cd $workingFolder

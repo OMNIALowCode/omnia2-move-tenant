@@ -1,7 +1,12 @@
-param([string]$code = "",[string]$shortcode = "",[string]$name = "",[string]$maxNumberOfUsers = "",[string]$subGroupCode = "",[string]$tenantAdmin = "",[string]$tenantAdminPwd = "",[string]$oem = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "")
+param([string]$code = "",[string]$shortcode = "",[string]$name = "",[string]$maxNumberOfUsers = "",[string]$subGroupCode = "",[string]$tenantAdmin = "",[string]$tenantAdminPwd = "",[string]$oem = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "",[string]$desiredVersion="")
 
 $thisfolder = $PSScriptRoot
+$datFolder = (Get-Item $thisfolder).Parent.FullName + "\Exported\datfiles"
 
+if (-not $desiredVersion -or $desiredVersion -eq ""){
+    $tenantInfo = Import-Csv $datFolder/'tenantInfo.csv'
+    $desiredVersion = $tenantInfo.DatabaseVersion
+}
 
 $jsonRepresentation = @"
 {
@@ -18,7 +23,8 @@ $jsonRepresentation = @"
   "TenantImage": null,
   "OEMBrand": "$oem",
   "Language": "en-US",
-  "Parameters": ""
+  "Parameters": "",
+  "DesiredVersion": "$desiredVersion"
 }
 "@
 
@@ -75,7 +81,7 @@ try{
         Start-Sleep -s 10
         $tracking = Invoke-WebRequest -Uri $Uri -Method GET -ContentType "application/json" -Headers @{"Authorization" = "$Authorization"} 
     }
-	Write-Host "Tenant created successfully with code $desiredTenantCode"
+	Write-Host "Tenant created successfully with code $code"
 }
 catch{
     $tracking = $_.Exception;
