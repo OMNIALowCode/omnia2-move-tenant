@@ -1,4 +1,4 @@
-param([string]$code = "",[string]$shortcode = "",[string]$name = "",[string]$maxNumberOfUsers = "",[string]$subGroupCode = "",[string]$tenantAdmin = "",[string]$tenantAdminPwd = "",[string]$oem = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "",[string]$desiredVersion="")
+param([string]$code = "",[string]$shortcode = "",[string]$name = "",[string]$maxNumberOfUsers = "",[string]$subGroupCode = "",[string]$tenantAdmin = "",[string]$tenantAdminPwd = "",[string]$oem = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "",[string]$desiredVersion="",[string]$tenantType="2")
 
 $thisfolder = $PSScriptRoot
 $datFolder = (Get-Item $thisfolder).Parent.FullName + "\Exported\datfiles"
@@ -18,7 +18,7 @@ $jsonRepresentation = @"
   "Email": "$tenantAdmin",
   "AdminEmail": "$tenantAdmin",
   "TenantTemplate": "",
-  "TenantType": "2",
+  "TenantType": "$tenantType",
   "Password": "$tenantAdminPwd",
   "TenantImage": null,
   "OEMBrand": "$oem",

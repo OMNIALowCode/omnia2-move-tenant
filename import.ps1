@@ -12,7 +12,9 @@
     [string] [Parameter(Mandatory=$true)] $WebsiteName, #http or https://*.azurewebsites.net
     [string] $SubscriptionName, #as in -subscriptionname param elsewhere
     [string] [Parameter(Mandatory=$true)] $ResourceGroupName, #as in -resourcegroupname param elsewhere
-    [string] $SubscriptionID #as in -subscriptionID param elsewhere
+    [string] $SubscriptionID, #as in -subscriptionID param elsewhere,
+    [switch] $overwriteIfExists = $false,
+    [string] [ValidateSet('Template','Demonstration','Full')]$tenantType = "Demonstration"
 )
 $ErrorActionPreference = "Stop"
 
@@ -72,9 +74,40 @@ if (-not $oem -or -not $shortcode -or -not $tenantname -or -not $tenantAdmin -or
 #Begin Work
 WRITE-HOST "$(Get-Date -format 'u') - Starting..."
 
+if ($overwriteIfExists){
+    Write-Host "Checking for existing tenant $tenant, and deleting it if it exists."
+    cd $workingFolder\ImportScripts
+    try{
+        & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -IfExists $true
+    }
+    catch{
+        if ($_.Exception.Message -ne "Failed getting tenant. Not attempting deletion."){
+            throw ($_.Exception.Message)
+        }
+        else{
+            Write-Host "Tenant does not exist. Creating it."
+        }
+    }
+    cd $workingFolder
+}
+
+
+if ($tenantType -eq "Demonstration"){
+    $tenantTypeCode = 0
+    $isTemplate = $false
+}
+elseif ($tenantType -eq "Full"){
+    $tenantTypeCode = 1
+    $isTemplate = $false
+}
+elseif ($tenantType -eq "Template"){
+    $tenantTypeCode = 2
+    $isTemplate = $true
+}
+
 Write-Progress -id 1 -activity "Importing Data" -Status "Creating Tenant"
 cd $workingFolder\ImportScripts
-& .\script-tenant-create.ps1 -code $tenant -shortcode $shortcode -name $tenantname -maxNumberOfUsers $maxNumberOfUsers -subGroupCode $subGroupCode -tenantAdmin $tenantAdmin -tenantAdminPwd $tenantAdminPwd -oem $oem -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd
+& .\script-tenant-create.ps1 -code $tenant -shortcode $shortcode -name $tenantname -maxNumberOfUsers $maxNumberOfUsers -subGroupCode $subGroupCode -tenantAdmin $tenantAdmin -tenantAdminPwd $tenantAdminPwd -oem $oem -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -tenantType $tenantTypeCode
 cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Tenant created..."
@@ -88,15 +121,17 @@ cd $workingFolder
 WRITE-HOST "$(Get-Date -format 'u') - Data imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Tables" -PercentComplete 25
-cd $workingFolder\ImportScripts
-& .\script-table-import.ps1 -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey -tenant $tenant
-cd $workingFolder
+if (-not $isTemplate){
+    cd $workingFolder\ImportScripts
+    & .\script-table-import.ps1 -storageAccountName $storageAccountName -storageAccessKey $storageAccessKey -tenant $tenant
+    cd $workingFolder
+}
 
 WRITE-HOST "$(Get-Date -format 'u') - Tables imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Blobs" -PercentComplete 37.5
 cd $workingFolder\ImportScripts
-& .\script-blob-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -tenant $tenant -storageAccessKey $storageAccessKey
+& .\script-blob-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -tenant $tenant -storageAccessKey $storageAccessKey -isTemplate $isTemplate
 cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Blobs imported..."
