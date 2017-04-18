@@ -541,8 +541,6 @@ END CATCH
 ";
 
 
-$statements > ($folder+"\LOG_UsersImport.sql")
-
 $commandDomain = $connection.CreateCommand()
 $commandDomain.CommandText  = $statements
 $commandDomain.CommandTimeout = 600

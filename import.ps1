@@ -166,7 +166,8 @@ Write-Progress -id 1 -activity "Importing Data" -Status "Completed" -Completed
 
 WRITE-HOST "$(Get-Date -format 'u') - DB Indexs rebuilt..."
 
-Write-Host "Data imported sucessfully. Please recreate the connectors."
+Write-Host "Data imported sucessfully. Please recreate the connectors.
+If the tenant was in a different database version that in the destination, it will be necessary to trigger a database migration."
 }
 catch{
     Write-Host ("Process failed! " + $_.Exception)

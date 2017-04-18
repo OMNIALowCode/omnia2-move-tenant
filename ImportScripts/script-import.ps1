@@ -67,7 +67,7 @@ foreach ($Row in $table.Rows)
 	
 	
 }
-  Write-Progress -id 2 -activity "Copying Database Tables" -Status "Completed" -Completed
+ Write-Progress -id 2 -activity "Copying Database Tables" -Status "Completed" -Completed
 
 $connection.Close()
 
