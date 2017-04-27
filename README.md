@@ -49,9 +49,20 @@ Execute export.ps1 to export the tenant data, and import.ps1 to import it to the
 
 - Only the users existing in the source application will have privileges in the destination account. Example: If the Master Account doesn’t exist in the source tenant, the master account won’t have privileges in the destination account.
 
-- The Source and Destination systems should be in the same Platform Version.
+- It is recommended that the Source and Destination systems should be in the same Platform Version.
 
-- Tenants are always created as Demo type. Ensure you switch them to the correct type when the migration is finished, if they are Full or Template in the origin account.
+    - If the Destination system has a **lower** version of the platform, migrations will not work. If it is **higher**, though, migrations will be possible, though it will be necessary to either restart the site, or use the Management area of the platform to edit the migrated tenant so that it is adjusted to that version of the platform.
+
+- Ensure that the source tenant is in the tenant type you want the destination tenant to be! This is especially important with **Template** tenants:
+
+    - When exporting, a Template tenant will not export any users that are marked as Inactive in the original tenant, to avoid bloat in destination subscriptions.
+
+    - When importing, a Template tenant will not import the Commands blobs.
+
+### Installing templates
+If you obtain a template (distributed as a zip that contains the **Exported** folder), you can import it using this tool into any subscription.
+
+The importing process works exactly as any other import - the script in **Helpers\DeployTemplate.ps1** is an example of how to perform a deployment.
 
 ------------------------------
 
@@ -71,7 +82,7 @@ The tenant code (GUID).
 
 ### WebsiteName (string)
 
-The full URL of the Azure website (https:\\xxx.azurewebsites.net format).
+The full URL of the Azure website (https:\\\\xxx.azurewebsites.net format).
 
 ### SubscriptionName (string)
 
@@ -80,6 +91,10 @@ The name of the Azure subscription (analogous to other -SubscriptionName in Azur
 ### ResourceGroupName (string)
 
 The name of the Azure resource group (analogous to other -ResourceGroupName in Azure Powershell).
+
+### SubscriptionID (string)
+
+The ID of the Azure subscription (analogous to other -SubscriptionID in Azure Powershell). Alternative to the SubscriptionName.
 
 ## Export example
 
@@ -100,13 +115,11 @@ Login-AzureRmAccount
 
 ## PARAMETERS
 
-### tenant (string)
-
-The desired tenant code (GUID). Can be the same as the exported code, or altered.
+## _Azure information:_
 
 ### WebsiteName (string)
 
-The full URL of the Azure website (https:\\xxx.azurewebsites.net format).
+The full URL of the Azure website (https:\\\\xxx.azurewebsites.net format).
 
 ### SubscriptionName (string)
 
@@ -116,6 +129,10 @@ The name of the Azure subscription (analogous to other -SubscriptionName in Azur
 
 The name of the Azure resource group (analogous to other -ResourceGroupName in Azure Powershell).
 
+### SubscriptionID (string)
+
+The ID of the Azure subscription (analogous to other -SubscriptionID in Azure Powershell). Alternative to the SubscriptionName.
+
 ### master (string)
 
 A user with System Admin Role in the destination subscription
@@ -124,7 +141,10 @@ A user with System Admin Role in the destination subscription
 
 The password of the user with System Admin Role in the destination subscription
 
-#### Tenant Information:
+## _Tenant Information:_
+### tenant (string)
+
+The desired tenant code (GUID). Can be the same as the exported code, or altered.
 
 ### shortcode (string)
 
@@ -152,8 +172,16 @@ The password for the user that will be used as the tenant Admin. If omitted, use
 
 ### oem (string)
 
-The code of the OEM the tenant will be part of. The OEM should already exist in the destination account
+The code of the OEM the tenant will be part of. The OEM should already exist in the destination account.
 
+### tenantType (string)
+
+Template, Demonstration or Full. If left empty, will create a Demonstration tenant. The Template type has implications regarding the data that is transferred.
+
+## _Other parameters_
+### overwriteIfExists (switch)
+
+Attempt to delete the tenant with the given code, if it exists in the destination.
 
 ## Import example
 
