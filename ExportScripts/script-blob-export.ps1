@@ -42,7 +42,7 @@ WRITE-HOST $container
 $SourceStorageContext = New-AzureStorageContext –StorageAccountName $storageAccountName -StorageAccountKey $accessKey
 
 try{
-    Get-AzureStorageContainer -Context $SourceStorageContext -Name "($containerName)public"
+    Get-AzureStorageContainer -Context $SourceStorageContext -Name "$($containerName)public"
 
     cd ${Env:ProgramFiles(x86)}
     cd "Microsoft SDKs\Azure\AzCopy"
