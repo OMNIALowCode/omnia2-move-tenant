@@ -78,7 +78,7 @@ if ($overwriteIfExists){
     Write-Host "Checking for existing tenant $tenant, and deleting it if it exists."
     cd $workingFolder\ImportScripts
     try{
-        & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -IfExists $true
+        & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -IfExists $true -tenantShortCode $shortCode
     }
     catch{
         if ($_.Exception.Message -ne "Failed getting tenant. Not attempting deletion."){
@@ -174,7 +174,7 @@ catch{
     $confirmation = Read-Host ("Do you want to delete the created tenant? Y to confirm")
     if ($confirmation -eq 'y' -or $confirmation -eq 'yes') {
         cd $workingFolder\ImportScripts
-        & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd
+        & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -tenantShortCode $shortCode
     }
     cd $workingFolder
 }

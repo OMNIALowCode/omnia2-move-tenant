@@ -1,4 +1,4 @@
-param([string]$tenant = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "", [switch] $ifExists = $false)
+param([string]$tenant = "",[string]$apiID = "",[string]$apiEndpoint = "",[string]$master = "" ,[string]$masterpwd = "", [switch] $ifExists = $false, [string] $tenantShortCode)
 
 $thisfolder = $PSScriptRoot
 
@@ -31,7 +31,7 @@ if ($ifExists){
     }
 }
 
-$uri = $apiEndpoint + "v1/tenant/remove?tenantcode=$tenant"
+$uri = $apiEndpoint + "v1/tenant/remove?shortCode=$tenantShortCode"
 
 
 Write-host "Sending deletion request to $uri"
