@@ -20,7 +20,7 @@ param([string] $apiUser, [string]$apiID, [string] $apiPassword, [string] $apiEnd
 $accessToken = ObtainToken $master $apiID $masterpwd $apiEndpoint
 
 if ($ifExists){
-    $uri = $apiEndpoint + "v1/tenant/Get?code=$tenant"
+    $uri = $apiEndpoint + "v1/tenant/Get?ShortCode=$tenantShortCode"
     $Authorization = "Bearer $accessToken"
     try {
         $res = Invoke-WebRequest -Uri $uri -Method GET -ContentType "application/json" -Headers @{"Authorization" = "$Authorization"} 
