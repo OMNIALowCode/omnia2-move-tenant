@@ -64,6 +64,10 @@ If you obtain a template (distributed as a zip that contains the **Exported** fo
 
 The importing process works exactly as any other import - the script in **Helpers\DeployTemplate.ps1** is an example of how to perform a deployment.
 
+#### Extracting templates
+
+The only step required to export a tenant that you wish to use as a template is saving the **Exported** folder from an export into a zip file, that should only contain that folder.
+
 ------------------------------
 
 # EXPORT.PS1
