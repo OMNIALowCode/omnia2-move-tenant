@@ -17,6 +17,9 @@
     [string] [ValidateSet('Template','Demonstration','Full')]$tenantType = "Demonstration"
 )
 $ErrorActionPreference = "Stop"
+$thisScriptVersion = 2.1
+
+Write-Host "Omnia Platform import tool - version $thisScriptVersion"
 
 if ($SubscriptionName){
     Set-AzureRmContext -SubscriptionName $SubscriptionName
@@ -75,7 +78,7 @@ if (-not $oem -or -not $shortcode -or -not $tenantname -or -not $tenantAdmin -or
 WRITE-HOST "$(Get-Date -format 'u') - Starting..."
 
 if ($overwriteIfExists){
-    Write-Host "Checking for existing tenant $tenant, and deleting it if it exists."
+    Write-Host "Checking for existing tenant $shortCode, and deleting it if it exists."
     cd $workingFolder\ImportScripts
     try{
         & .\script-tenant-delete.ps1 -tenant $tenant -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -IfExists $true -tenantShortCode $shortCode

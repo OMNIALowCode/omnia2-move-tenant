@@ -41,12 +41,18 @@ foreach ($Row in $table.Rows)
   Write-Progress -id 2 -activity "Copying Database Tables" -Status "Copying Table $($Row[0])" -PercentComplete $percent
 
   WRITE-HOST "Copy of $($Row[0])..."
-  
-  bcp [$($database)].[$($tenant)].[$($Row[0])] format nul  -N  -x -f $datFolder\$($Row[0]).xml -E -S $($server) -U $($user) -P $($passwd)
-  bcp [$($database)].[$($tenant)].[$($Row[0])] out $datFolder\$($Row[0]).dat -S $($server) -U $($user) -P $($passwd) -N
-  
-  
+
+  $OUTPUT = bcp [$($database)].[$($tenant)].[$($Row[0])] format nul  -N  -x -f $datFolder\$($Row[0]).xml -E -S $($server) -U $($user) -P $($passwd)
+  if ($LASTEXITCODE -ne 0){
+    throw "Error invoking BCP: $OUTPUT"
+  }
+
+  $OUTPUT = bcp [$($database)].[$($tenant)].[$($Row[0])] out $datFolder\$($Row[0]).dat -S $($server) -U $($user) -P $($passwd) -N
+  if ($LASTEXITCODE -ne 0){
+    throw "Error invoking BCP: $OUTPUT"
+  }
 }
+
   Write-Progress -id 2 -activity "Copying Database Tables" -Status "Completed" -Completed
 
 $tenantInfoCommand = $connection.CreateCommand()

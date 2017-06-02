@@ -24,8 +24,15 @@ WRITE-HOST $tableOperation
   cd ${Env:ProgramFiles(x86)}
   cd "Microsoft SDKs\Azure\AzCopy"
   
-  .\AzCopy.exe /Source:$tableCommand /Dest:"$folder\Command" /SourceKey:$accessKey /Manifest:table.manifest
-  .\AzCopy.exe /Source:$tableOperation /Dest:"$folder\Operation" /SourceKey:$accessKey /Manifest:table.manifest
+  $OUTPUT = .\AzCopy.exe /Source:$tableCommand /Dest:"$folder\Command" /SourceKey:$accessKey /Manifest:table.manifest
+    if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
+
+  $OUTPUT = .\AzCopy.exe /Source:$tableOperation /Dest:"$folder\Operation" /SourceKey:$accessKey /Manifest:table.manifest
+    if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
 
   cd $PSScriptRoot
 

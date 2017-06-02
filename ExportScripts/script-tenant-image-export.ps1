@@ -22,8 +22,16 @@ WRITE-HOST $container
   cd ${Env:ProgramFiles(x86)}
   cd "Microsoft SDKs\Azure\AzCopy"
   
-  .\AzCopy.exe /Source:$container /Dest:$folder /SourceKey:$accessKey /Pattern:"image/$tenantName.jpg"
-  .\AzCopy.exe /Source:$container /Dest:$folder /SourceKey:$accessKey /Pattern:"image/$tenantName.png"
+
+  $OUTPUT = .\AzCopy.exe /Source:$container /Dest:$folder /SourceKey:$accessKey /Pattern:"image/$tenantName.jpg"
+      if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
+
+  $OUTPUT = .\AzCopy.exe /Source:$container /Dest:$folder /SourceKey:$accessKey /Pattern:"image/$tenantName.png"
+      if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
 
   cd $PSScriptRoot
 

@@ -7,6 +7,9 @@
     )
 
 $ErrorActionPreference = "Stop"
+$thisScriptVersion = 2.1
+
+Write-Host "Omnia Platform export tool - version $thisScriptVersion"
 
 if ($SubscriptionName){
     Set-AzureRmContext -SubscriptionName $SubscriptionName

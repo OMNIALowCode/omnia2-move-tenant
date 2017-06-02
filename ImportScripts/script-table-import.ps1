@@ -21,8 +21,10 @@ Get-ChildItem -path $folder\Command -filter *.json | ForEach-Object {
   
   $_.BaseName
   
-  .\AzCopy.exe /Source:"$folder\Command" /Dest:$tableCommand /DestKey:$accessKey /Manifest:"table.manifest" /EntityOperation:InsertOrReplace
-  
+  $OUTPUT = .\AzCopy.exe /Source:"$folder\Command" /Dest:$tableCommand /DestKey:$accessKey /Manifest:"table.manifest" /EntityOperation:InsertOrReplace
+  if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
 
   cd $PSScriptRoot
 
@@ -41,8 +43,10 @@ Get-ChildItem -path $folder\Operation -filter *.json | ForEach-Object {
   
   $_.BaseName
   
-  .\AzCopy.exe /Source:"$folder\Operation" /Dest:$tableOperation /DestKey:$accessKey /Manifest:"table.manifest" /EntityOperation:InsertOrReplace
-  
+  $OUTPUT = .\AzCopy.exe /Source:"$folder\Operation" /Dest:$tableOperation /DestKey:$accessKey /Manifest:"table.manifest" /EntityOperation:InsertOrReplace
+    if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
 
   cd $PSScriptRoot
 

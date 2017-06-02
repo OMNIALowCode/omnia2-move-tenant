@@ -49,7 +49,10 @@ foreach ($Row in $table.Rows)
     $utf8 = new-object -TypeName System.Text.UTF8Encoding
     $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($text)))
 
-  .\AzCopy.exe /Source:$container /Dest:$folder /SourceKey:$accessKey /Pattern:"image/$hash.jpg"
+    $OUTPUT = .\AzCopy.exe /Source:$container /Dest:$folder /SourceKey:$accessKey /Pattern:"image/$hash.jpg"
+    if ($LASTEXITCODE -ne 0){
+    throw "Error invoking AzCopy: $OUTPUT"
+  }
 
   cd $PSScriptRoot
   

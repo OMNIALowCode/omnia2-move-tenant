@@ -62,11 +62,12 @@ foreach ($Row in $table.Rows)
 
 	WRITE-HOST "Copy of $($Row[0])..."
   
-	bcp "[$($database)].[$($tenant)].[$($Row[0])]" in $datFolder\$($Row[0]).dat -f  $datFolder\$($Row[0]).xml -S "$($server)" -U "$($user)" -P "$($passwd)" -N -E
-	
-	
-	
+	$OUTPUT = bcp "[$($database)].[$($tenant)].[$($Row[0])]" in $datFolder\$($Row[0]).dat -f  $datFolder\$($Row[0]).xml -S "$($server)" -U "$($user)" -P "$($passwd)" -N -E
+    if ($LASTEXITCODE -ne 0){
+       throw "Error invoking BCP: $OUTPUT"
+    }
 }
+
  Write-Progress -id 2 -activity "Copying Database Tables" -Status "Completed" -Completed
 
 $connection.Close()
