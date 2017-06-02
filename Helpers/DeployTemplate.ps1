@@ -10,7 +10,7 @@ Param(
 	$oem,
 	$master,
 	$masterPwd,
-	$websiteName,
+	$websiteName,  #http or https://*.azurewebsites.net
 	$ResourceGroupName,
 	$subscriptionName
 )
