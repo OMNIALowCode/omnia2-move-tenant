@@ -24,7 +24,9 @@ $jsonRepresentation = @"
   "OEMBrand": "$oem",
   "Language": "en-US",
   "Parameters": "",
-  "DesiredVersion": "$desiredVersion"
+  "DesiredVersion": "$desiredVersion",
+  "CustomerName": "$customerName",
+  "VATNumber": "$customerID"
 }
 "@
 

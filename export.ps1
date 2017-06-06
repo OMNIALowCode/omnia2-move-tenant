@@ -7,7 +7,7 @@
     )
 
 $ErrorActionPreference = "Stop"
-$thisScriptVersion = 2.1
+$thisScriptVersion = 2.2
 
 Write-Host "Omnia Platform export tool - version $thisScriptVersion"
 

@@ -4,6 +4,8 @@
 
 This set of scripts is used to export a tenant and import it into another subscription of the OMNIA platform.  
 
+This document is updated to version 2.2 of the tool.
+
 ## DESCRIPTION
 
 The account migration process is based on 2 moments. First, you export the Data from the origin account and second, you import it to the destination account.
@@ -32,6 +34,7 @@ Before executing the tool, ensure that:
 ### How to
 Download the MoveTenantBetweenSubscriptions folder from GitHub, either by cloning the repository, or using a tool that downloads the folder only (such as [this](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/numbersbelieve/omnia-deployment/tree/master/MoveTenantBetweenSubscriptions)).
 
+
 Execute export.ps1 to export the tenant data, and import.ps1 to import it to the destination. To understand the parameters, please consult the last sections of this readme file.
 
 ### Guidelines
@@ -53,12 +56,14 @@ Execute export.ps1 to export the tenant data, and import.ps1 to import it to the
 
     - If the Destination system has a **lower** version of the platform, migrations will not work. If it is **higher**, though, migrations will be possible, though it will be necessary to either restart the site, or use the Management area of the platform to edit the migrated tenant so that it is adjusted to that version of the platform.
 
-- Ensure that the source tenant is in the tenant type you want the destination tenant to be! This is especially important with **Template** tenants:
+- Ensure that the source tenant is in the tenant type you want the destination tenant to be! This is especially important with **Template** tenants.
 
     - When exporting, a Template tenant will not export any users that are marked as Inactive in the original tenant, to avoid bloat in destination subscriptions.
 
     - When importing, a Template tenant will not import the Commands blobs.
 
+	- When importing, it is **mandatory** to provide a Customer ID and Customer Name for Full-type tenants.
+	
 ### Installing templates
 If you obtain a template (distributed as a zip that contains the **Exported** folder), you can import it using this tool into any subscription.
 
@@ -182,10 +187,22 @@ The code of the OEM the tenant will be part of. The OEM should already exist in 
 
 Template, Demonstration or Full. If left empty, will create a Demonstration tenant. The Template type has implications regarding the data that is transferred.
 
+### customerName (string)
+
+Name that identifies the customer. Mandatory in Full tenants.
+
+### customerID (string)
+
+ID that identifies the customer (fiscally). Mandatory in Full tenants.
+
 ## _Other parameters_
 ### overwriteIfExists (switch)
 
 Attempt to delete the tenant with the given code, if it exists in the destination.
+
+### ignoreCommands (switch)
+
+Ignores the "Commands" folder when importing the blobs. Users will not be able to see command history.
 
 ## Import example
 

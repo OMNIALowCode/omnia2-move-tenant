@@ -1,4 +1,4 @@
-param([string]$resourceGroupName = "", [string]$storageAccountName = "", [string]$tenant = "", [string] $storageAccessKey = "", [bool] $isTemplate = $false)
+param([string]$resourceGroupName = "", [string]$storageAccountName = "", [string]$tenant = "", [string] $storageAccessKey = "", [bool] $isTemplate = $false, [switch] $ignoreCommands = $false)
 
 function importFiles([string]$localFolder, [string]$destFolder, [string] $storageAccessKey){
     if (Test-Path $localFolder){
@@ -33,7 +33,7 @@ $localfolder = "$folder\Report-Container"
 $destfolder = "Report-Container"
 importFiles $localfolder $destfolder $storageAccessKey
 
-if (-not $isTemplate){
+if (-not $isTemplate -and -not $ignoreCommands){
     $localfolder = "$folder\Commands"
     $destfolder = "Commands"
     importFiles $localfolder $destfolder $storageAccessKey

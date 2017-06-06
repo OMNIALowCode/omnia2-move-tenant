@@ -14,10 +14,13 @@
     [string] [Parameter(Mandatory=$true)] $ResourceGroupName, #as in -resourcegroupname param elsewhere
     [string] $SubscriptionID, #as in -subscriptionID param elsewhere,
     [switch] $overwriteIfExists = $false,
-    [string] [ValidateSet('Template','Demonstration','Full')]$tenantType = "Demonstration"
+    [string] [ValidateSet('Template','Demonstration','Full')]$tenantType = "Demonstration",
+    [switch] $ignoreCommands = $false,
+    [string] $customerName,
+    [string] $customerID
 )
 $ErrorActionPreference = "Stop"
-$thisScriptVersion = 2.1
+$thisScriptVersion = 2.2
 
 Write-Host "Omnia Platform import tool - version $thisScriptVersion"
 
@@ -74,6 +77,10 @@ if (-not $oem -or -not $shortcode -or -not $tenantname -or -not $tenantAdmin -or
     throw "Invalid tenant creation configuration!"
 }
 
+if ($tenantType -eq "Full" -and ($customerName -eq "" -or $customerName -eq $null) -and ($customerID -eq "" -or $customerID -eq $null)){
+    throw "Full type tenants require setting a customer Name and ID!"
+}
+
 #Begin Work
 WRITE-HOST "$(Get-Date -format 'u') - Starting..."
 
@@ -110,7 +117,7 @@ elseif ($tenantType -eq "Template"){
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Creating Tenant"
 cd $workingFolder\ImportScripts
-& .\script-tenant-create.ps1 -code $tenant -shortcode $shortcode -name $tenantname -maxNumberOfUsers $maxNumberOfUsers -subGroupCode $subGroupCode -tenantAdmin $tenantAdmin -tenantAdminPwd $tenantAdminPwd -oem $oem -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -tenantType $tenantTypeCode
+& .\script-tenant-create.ps1 -code $tenant -shortcode $shortcode -name $tenantname -maxNumberOfUsers $maxNumberOfUsers -subGroupCode $subGroupCode -tenantAdmin $tenantAdmin -tenantAdminPwd $tenantAdminPwd -oem $oem -apiID $apiID -apiEndpoint $apiEndpoint -master $master -masterpwd $masterpwd -tenantType $tenantTypeCode -customerName $customerName -customerID $customerID
 cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Tenant created..."
