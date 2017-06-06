@@ -141,7 +141,7 @@ WRITE-HOST "$(Get-Date -format 'u') - Tables imported..."
 
 Write-Progress -id 1 -activity "Importing Data" -Status "Importing Blobs" -PercentComplete 37.5
 cd $workingFolder\ImportScripts
-& .\script-blob-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -tenant $tenant -storageAccessKey $storageAccessKey -isTemplate $isTemplate
+& .\script-blob-import.ps1 -resourceGroupName $resourceGroupName -storageAccountName $storageAccountName -tenant $tenant -storageAccessKey $storageAccessKey -isTemplate $isTemplate -ignoreCommands $ignoreCommands.IsPresent
 cd $workingFolder
 
 WRITE-HOST "$(Get-Date -format 'u') - Blobs imported..."
