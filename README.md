@@ -4,7 +4,7 @@
 
 This set of scripts is used to export a tenant and import it into another subscription of the OMNIA platform.  
 
-This document is updated to version 2.2 of the tool.
+This document is updated to version 2.3 of the tool.
 
 ## DESCRIPTION
 
@@ -80,7 +80,7 @@ The only step required to export a tenant that you wish to use as a template is 
 Before executing, you should be authenticated via Azure RM:
 
 ```powershell
-Login-AzureRmAccount
+Login-AzAccount
 ```
 
 ## PARAMETERS
@@ -119,7 +119,7 @@ The ID of the Azure subscription (analogous to other -SubscriptionID in Azure Po
 Before executing, you should be authenticated via Azure RM:
 
 ```powershell
-Login-AzureRmAccount
+Login-AzAccount
 ```
 
 ## PARAMETERS

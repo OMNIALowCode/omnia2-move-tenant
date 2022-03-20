@@ -20,7 +20,7 @@
     [string] $customerID
 )
 $ErrorActionPreference = "Stop"
-$thisScriptVersion = 2.2
+$thisScriptVersion = 2.3
 
 Write-Host "Omnia Platform import tool - version $thisScriptVersion"
 
