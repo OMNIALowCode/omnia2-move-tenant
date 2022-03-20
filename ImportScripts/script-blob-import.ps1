@@ -2,12 +2,12 @@ param([string]$resourceGroupName = "", [string]$storageAccountName = "", [string
 
 function importFiles([string]$localFolder, [string]$destFolder, [string] $storageAccessKey){
     if (Test-Path $localFolder){
-        $blobContext = New-AzureStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccessKey
+        $blobContext = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccessKey
         Get-ChildItem $localFolder  | %{
           $fileName = "$localFolder\$_"
           $blobName = "$destfolder/$_"
           write-host "copying $fileName to $blobName"
-          Set-AzureStorageBlobContent -File $filename -Container $containerName -Blob $blobName -Context $blobContext -Force
+          Set-AzStorageBlobContent -File $filename -Container $containerName -Blob $blobName -Context $blobContext -Force
         } 
         write-host "All files in $localFolder uploaded to $containerName!"
     }

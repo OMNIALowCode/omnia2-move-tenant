@@ -12,10 +12,10 @@ $thisScriptVersion = 2.2
 Write-Host "Omnia Platform export tool - version $thisScriptVersion"
 
 if ($SubscriptionName){
-    Set-AzureRmContext -SubscriptionName $SubscriptionName
+    Set-AzContext -SubscriptionName $SubscriptionName
 }
 elseif ($SubscriptionID){
-    Set-AzureRmContext -SubscriptionId $SubscriptionID
+    Set-AzContext -SubscriptionId $SubscriptionID
 }
 else{
     throw "Process does not work without an Azure Subscription!"
@@ -23,7 +23,7 @@ else{
 $workingFolder = $PSScriptRoot
 
 $siteName = (($WebsiteName -split "://")[1] -split ".azurewebsites.net")[0]
-$webApp = Get-AzureRMWebAppSlot -ResourceGroupName $ResourceGroupName -Name $siteName -Slot "Production"
+$webApp = Get-AzWebAppSlot -ResourceGroupName $ResourceGroupName -Name $siteName -Slot "Production"
 
 foreach ($setting in $webApp.SiteConfig.ConnectionStrings){
     if ($setting.Name -eq "MyMis.Storage.ConnectionString"){
